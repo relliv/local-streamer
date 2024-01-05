@@ -28,18 +28,21 @@ export default class File {
 
     files.forEach((file) => {
       const path = `${targetDir}/${file}`;
+      const isDirectory = fs.lstatSync(path).isDirectory();
 
-      if (fs.lstatSync(path).isDirectory()) {
+      if (isDirectory) {
         const nestedFolders: any[] = File.getFolderContainsRecursive(path);
         folders.push({
           fileName: file,
           path: path,
+          isFolder: isDirectory,
           children: nestedFolders,
         });
       } else {
         folders.push({
           fileName: file,
           path: path,
+          isFolder: isDirectory,
           children: [],
         });
       }
