@@ -1,12 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import * as fs from "fs";
 
 type ResponseData = {
-  message: string;
+  isFileExists: any;
 };
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  res.status(200).json({ message: "Hello from Next.js!" });
+  const isFileExists = fs.existsSync(req.query.filePath as string);
+
+  res.status(200).json({ isFileExists: isFileExists });
 }

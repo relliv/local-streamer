@@ -11,7 +11,6 @@ export default function Home() {
 
   const files: any = getFolderTree();
 
-  console.log(files);
   return (
     <section>
       {/* component */}
