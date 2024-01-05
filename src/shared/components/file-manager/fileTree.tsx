@@ -18,11 +18,7 @@ export default function FileTree(props: any) {
     setMoveHistory(file);
     setFilterFiles(file.children);
 
-    if (!file.isFolder) {
-      setSelectedFile(file);
-    } else {
-      setSelectedFile(null);
-    }
+    setSelectedFile(!file.isFolder ? file : null);
   };
 
   return (
