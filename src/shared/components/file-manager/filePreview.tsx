@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { VideoPlayer } from "@videojs-player/react";
 
 export default function FileTree(props: any) {
   const [file, setFile] = useState<any>(null);
@@ -9,5 +10,9 @@ export default function FileTree(props: any) {
     setFile(props.file);
   }, [props.file]);
 
-  return <div className="flex flex-row">{file ? file.fileName : null}</div>;
+  return (
+    <div className="flex flex-row">
+      {file ? <VideoPlayer src={`/api/stream?filePath=${file.path}`} /> : null}
+    </div>
+  );
 }
