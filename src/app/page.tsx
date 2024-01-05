@@ -1,4 +1,16 @@
+import { useState } from "react";
+import file from "./../shared/utils/file";
+
 export default function Home() {
+  const getFolderTree = () => {
+    const currentDir = __dirname + "/../../../../../../hub/";
+
+    return file.getFolderContainsRecursive(currentDir);
+  };
+
+  const files: any = getFolderTree();
+
+  console.log(files);
   return (
     <section>
       {/* component */}
@@ -213,7 +225,7 @@ export default function Home() {
 
           {/* File Manager Body */}
           <div className="flex flex-row flex-wrap p-5 gap-6 justify-center items-center py-5 h-[700px] overflow-y-auto">
-            {[...Array(100).keys()].map((item, index) => {
+            {files.map((item: any, index: number) => {
               return (
                 <button
                   key={index}
@@ -238,7 +250,7 @@ export default function Home() {
                   </svg>
 
                   <span className="text-base group-hover:underline text-blue-400 group-hover:text-blue-600 transition-all ease-in-out duration-300">
-                    {item}
+                    {item.fileName}
                   </span>
                 </button>
               );
