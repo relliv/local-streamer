@@ -9,5 +9,5 @@ export default function FileTree(props: any) {
     setFile(props.file);
   }, [props.file]);
 
-  return <div className="flex flex-row">{file}</div>;
+  return <div className="flex flex-row">{file ? file.fileName : null}</div>;
 }
