@@ -1,10 +1,13 @@
 import { useState } from "react";
 import file from "./../shared/utils/file";
 import FileTree from "@/shared/components/file-manager/fileTree";
+import * as path from "path";
 
 export default function Home() {
   const getFolderTree = () => {
     const currentDir = __dirname + "/../../../../../../hub/";
+
+    console.log(__dirname, path.resolve(__dirname, "../../../../../../hub/"));
 
     return file.getFolderContainsRecursive(currentDir);
   };
