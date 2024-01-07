@@ -21,23 +21,36 @@ export default async function handler(
 ) {
   const outputFolder: string = __dirname + "./../../../public/videos/output";
 
-  // if (!fsSync.existsSync(outputFolder)) {
-  //   fsSync.mkdirSync(outputFolder);
-  // }
-
   const { query } = req,
     inputFilePath = query.filePath as string,
     outputFilePath = path.join(
-      outputFolder,
-      file.getFilenameWithoutExtension(inputFilePath)
-    );
-
-  const result = await videoSplitter(
-    query.filePath as string,
-    outputFilePath,
-    20,
+    outputFolder,
     file.getFilenameWithoutExtension(inputFilePath)
-  );
+    ),
+    segmentDuration = 20;
+
+  const videoOutputFolder = `./public/videos/output/${file.getFilenameWithoutExtension(inputFilePath)}/v0`
+
+  let files = await fs.readdir(videoOutputFolder);
+
+  if (!files) {
+    const result = await videoSplitter(
+      query.filePath as string,
+      outputFilePath,
+      segmentDuration,
+      file.getFilenameWithoutExtension(inputFilePath)
+    );    
+
+    files = await fs.readdir(videoOutputFolder);
+  }
+    
+const m3u8Content = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:${segmentDuration}\n#EXT-X-MEDIA-SEQUENCE:0\n` +
+      files.map((file, index) => `#EXTINF:${segmentDuration},\n${file}`).join('\n') +
+      `\n#EXT-X-ENDLIST`;
+
+    // M3U8 dosyasını gönder
+    res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
+    res.send(m3u8Content);
 }
 
 function videoSplitter(
