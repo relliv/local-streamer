@@ -11,7 +11,6 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 export const config = {
   api: {
     responseLimit: false,
-    // responseLimit: '8mb',
   },
 };
 
@@ -24,33 +23,43 @@ export default async function handler(
   const { query } = req,
     inputFilePath = query.filePath as string,
     outputFilePath = path.join(
-    outputFolder,
-    file.getFilenameWithoutExtension(inputFilePath)
+      outputFolder,
+      file.getFilenameWithoutExtension(inputFilePath)
     ),
     segmentDuration = 20;
 
-  const videoOutputFolder = `./public/videos/output/${file.getFilenameWithoutExtension(inputFilePath)}/v0`
+  const videoOutputFolder = `./public/videos/output/${file.getFilenameWithoutExtension(
+    inputFilePath
+  )}/v0`;
+
+  if (!fsSync.existsSync(videoOutputFolder)) {
+    await fs.mkdir(videoOutputFolder, { recursive: true });
+  }
 
   let files = await fs.readdir(videoOutputFolder);
 
-  if (!files) {
+  if (!files.length) {
     const result = await videoSplitter(
       query.filePath as string,
       outputFilePath,
       segmentDuration,
       file.getFilenameWithoutExtension(inputFilePath)
-    );    
+    );
 
     files = await fs.readdir(videoOutputFolder);
   }
-    
-const m3u8Content = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:${segmentDuration}\n#EXT-X-MEDIA-SEQUENCE:0\n` +
-      files.map((file, index) => `#EXTINF:${segmentDuration},\n${file}`).join('\n') +
-      `\n#EXT-X-ENDLIST`;
 
-    // M3U8 dosyasını gönder
-    res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
-    res.send(m3u8Content);
+  console.log(files, videoOutputFolder);
+
+  const m3u8Content =
+    `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:${segmentDuration}\n#EXT-X-MEDIA-SEQUENCE:0\n` +
+    files
+      .map((file, index) => `#EXTINF:${segmentDuration},\n${file}`)
+      .join("\n") +
+    `\n#EXT-X-ENDLIST`;
+
+  res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
+  res.send(m3u8Content);
 }
 
 function videoSplitter(
