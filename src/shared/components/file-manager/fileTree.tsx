@@ -22,7 +22,7 @@ export default function FileTree(props: any) {
   };
 
   return (
-    <div className="flex flex-row flex-wrap p-5 gap-6 justify-center items-center py-5 h-[700px] overflow-y-auto">
+    <div className="flex flex-row flex-wrap p-5 gap-6 justify-center items-center py-5 h-screen overflow-y-auto">
       {/* Selected File */}
       <FilePreview file={selectedFile} />
 
