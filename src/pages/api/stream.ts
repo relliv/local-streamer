@@ -21,7 +21,7 @@ export default async function handler(
   const outputFolder: string = __dirname + "./../../../public/videos/output";
 
   const { query } = req,
-    inputFilePath = query.filePath as string,
+    inputFilePath = (query.filePath as string).replace('.m3u8', '.mp4'),
     outputFilePath = path.join(
       outputFolder,
       file.getFilenameWithoutExtension(inputFilePath)
@@ -40,7 +40,7 @@ export default async function handler(
 
   if (!files.length) {
     const result = await videoSplitter(
-      query.filePath as string,
+      inputFilePath,
       outputFilePath,
       segmentDuration,
       file.getFilenameWithoutExtension(inputFilePath)
@@ -54,7 +54,7 @@ export default async function handler(
   const m3u8Content =
     `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:${segmentDuration}\n#EXT-X-MEDIA-SEQUENCE:0\n` +
     files
-      .map((file, index) => `#EXTINF:${segmentDuration},\n${file}`)
+      .map((file, index) => `#EXTINF:${segmentDuration},\n${videoOutputFolder.replace('./public', 'http://localhost:3000')}/${file}`)
       .join("\n") +
     `\n#EXT-X-ENDLIST`;
 
